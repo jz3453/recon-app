@@ -1,0 +1,48 @@
+@import url('https://fonts.googleapis.com/css2?family=Averia+Serif+Libre:ital,wght@0,400;0,700;1,300&family=Be+Vietnam+Pro:wght@100;200;300;400;500;600;700;800;900&family=Krona+One&family=Poppins:wght@200;300;400;500;600&display=swap');
+
+* {
+  font-family: 'Averia Serif Libre', serif;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-family: 'Krona One', sans-serif;
+  font-family: 'Poppins', sans-serif;
+}
+
+.top-bar {
+  height: 100px;
+  background-color: #ffffff; /* Set your desired background color */
+  position: sticky;
+  top: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px; /* Add padding or adjust as needed */
+}
+
+.title-block {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: #0E14B4;
+}
+
+.title-columbia {
+  font-size: 16px;
+  font-weight: 400;
+  margin: 0;
+}
+
+.title-research {
+  font-size: 28px;
+  font-weight: 500;
+  margin-top: -5px;
+}
+
+.profile-icon {
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #B5D7FF;
+  color: #0E14B4;
+  font-size: 16px;
+}

@@ -1,0 +1,17 @@
+.steps-outline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 80px;
+  margin-bottom: 50px;
+  font-size: 14px;
+  font-weight: 400;
+  color: #7A7A7A;
+}
+
+.active-step {
+  color: #53A2FF;
+}
+.arrow-icon {
+  color: #c6c6c6;
+}
