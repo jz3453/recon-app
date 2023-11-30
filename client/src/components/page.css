@@ -19,7 +19,7 @@
 .main-content {
   border-left: rgb(255, 121, 121) 1px solid; /* Remove this border */
   border-right: rgb(255, 121, 121) 1px solid; /* Remove this border */
-  width: 55%;
+  width: 60%;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -248,7 +248,7 @@
 }
 
 .documents-table tr:nth-child(even) {
-  background-color: #f8fbff; /* Alternate row color */
+  background-color: #f4f8fc; /* Alternate row color */
 }
 
 .row-button {
@@ -291,7 +291,7 @@
 }
 
 .modal-container .section-box {
-  width: 55%;
+  width: 60%;
   background-color: #ffffff;
   border: rgba(0, 0, 0, 0.15) 1px solid;
   border-radius: 5px;

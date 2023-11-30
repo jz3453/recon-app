@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import CreateOpportunity from './components/CreateOpportunity';
 import PostingsDashboard from './components/dashboard/PostingsDashboard';
 import ApplicationsDashboard from './components/dashboard/ApplicationsDashboard';
+import Application from './components/dashboard/Application';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fab } from '@fortawesome/free-brands-svg-icons';
 import { fas } from '@fortawesome/free-solid-svg-icons';
@@ -15,6 +16,7 @@ function App() {
         <Route path="/" element={<CreateOpportunity />} />
         <Route path="/dashboard" element={<PostingsDashboard />} />
         <Route path="/dashboard/:opportunityId" element={<ApplicationsDashboard />} />
+        <Route path="/details/:applicationId" element={<Application />} />
       </Routes>
     </Router>
   );

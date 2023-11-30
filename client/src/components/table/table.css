@@ -1,0 +1,80 @@
+.table-container {
+  width: 100%;
+}
+
+.table {
+  width: 100%;
+  border-spacing: 0;
+  border: rgba(0, 0, 0, 0.15) 1px solid;
+  border-radius: 5px;
+  margin: 5px 0 0 0;
+}
+
+.empty {
+  border-radius: 5px 5px 0 0;
+  border-bottom: none;
+}
+
+.column-name {
+  font-size: 10px;
+  font-weight: 400;
+  color: #2C2C2C;
+  text-align: start;
+}
+
+.table-row {
+  font-size: 11px;
+  font-weight: 300;
+  color: #2C2C2C;
+  text-align: start;
+}
+
+.table tbody tr:hover {
+  background-color: #e8f3fd !important; /* Change this to the desired color */
+}
+
+.table th {
+  padding: 10px 5px 10px 8px;
+  background-color: #F5F5F5;
+}
+
+.table td {
+  font-size: 12px;
+  padding: 15px 5px 15px 8px; /* Adjust padding as needed */
+}
+
+.table tr:nth-child(even) {
+  background-color: #f4f8fc; /* Alternate row color */
+}
+
+.table tr:nth-child(odd) {
+  background-color: #ffffff; /* Alternate row color */
+}
+
+.css-11u53oe-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input.css-11u53oe-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input.css-11u53oe-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input {
+  padding-left: 5px;
+}
+
+.empty-message {
+  height: 50px;
+  width: 100%;
+  background-color: #ffffff;
+  border: rgba(0, 0, 0, 0.15) 1px solid;
+  border-top: none;
+  border-radius: 0 0 5px 5px;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
+  color: #7A7A7A;
+}
+
+.link {
+  width: 100%;
+  display: block;
+}
+
+tbody {
+  width: 100%;
+}

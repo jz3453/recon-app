@@ -117,3 +117,11 @@ export const questionTypes = [
   'Checklist',
   'Linear Scale',
 ]
+
+export const statusOptions = [
+  'Pending',
+  'Interviewing',
+  'Shortlist',
+  'Extend Offer',
+  'Reject',
+];
