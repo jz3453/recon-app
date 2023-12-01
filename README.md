@@ -25,4 +25,6 @@ The server should be running on http://127.0.0.1:5000/
 3. Install dependencies: `npm install`
 4. Start the React app: `npm start`
 
+The client should be running on http://localhost:3000/
+
 ## Usage
