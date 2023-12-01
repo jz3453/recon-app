@@ -2,6 +2,11 @@
   margin-bottom: 20px;
 }
 
+.height-limit {
+  max-height: 600px;
+  overflow-y: scroll;
+}
+
 .link-header {
   margin: 50px 0px 20px 0px;
   font-size: 14px;
@@ -50,4 +55,136 @@
   background-color: rgba(253, 159, 147, 0.45);
   color: #FF1F00;
   margin-left: 5px;
+}
+
+.less {
+  margin: 10px 0;
+}
+
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header {
+  font-size: 18px;
+  color: #2c2c2c;
+  font-weight: 600;
+}
+
+.candidate-info {
+  display: flex;
+  flex-direction: column;
+  font-size: 12px;
+  color: #2c2c2c;
+  margin-top: 5px;
+}
+
+.info-text {
+  margin-top: 5px;
+}
+
+.eligibility-container {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.eligibility-container .info-text {
+  margin: 0;
+}
+
+.eligibility-stat {
+  margin: 0 10px;
+}
+
+.met {
+  color: green;
+}
+
+.unmet {
+  color: red;
+}
+
+.selections {
+  margin: 10px 10px 0 10px;
+}
+
+.selections-checkbox-option {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.checkbox-label[disabled] {
+  color: #2c2c2c;
+}
+
+.smaller {
+  font-size: 10px;
+}
+
+.bold {
+  font-weight: 500;
+}
+
+.response-container {
+  margin: 30px 0;
+}
+
+.question-container {
+  margin: 15px 0;
+}
+
+.more-space {
+  margin-top: 10px;
+  margin-bottom: 30px;
+}
+
+.more-padding {
+  padding: 20px 35px !important;
+}
+
+.answer {
+  font-size: 12px;
+  color: #2c2c2c;
+  line-height: 1.5;
+  margin-top: 10px;
+}
+
+.notes-section {
+  border-top: #7A7A7A 1px solid;
+  padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.notes {
+  font-size: 12px;
+  color: #2c2c2c;
+  resize: none;
+  height: 100px;
+  margin-top: 5px;
+  margin-bottom: 0px;
+}
+
+.save-note-button {
+  margin-top: 5px;
+  width: 50px;
+  font-size: 10px;
+  padding: 2px;
+}
+
+.save-button-container {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.primary {
+  background-color: #53A2FF;
+  border: rgba(0, 0, 0, 0.15) 1px solid;
+  border-radius: 3px;
+  color: #ffffff;
 }

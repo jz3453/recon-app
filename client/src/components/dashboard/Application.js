@@ -16,6 +16,7 @@ const Application = () => {
     axios.get(`http://127.0.0.1:5000/get_application/${applicationId}`)
       .then(response => {
         setApplication(response.data);
+        console.log(response.data)
       })
       .catch(error => {
         console.error('Error fetching application:', error);
@@ -24,7 +25,6 @@ const Application = () => {
 
   useEffect(() => {
     fetchApplication();
-    console.log(application);
   }, []);
 
   return (

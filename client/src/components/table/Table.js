@@ -4,7 +4,7 @@ import StatusDropdown from './StatusDropdown';
 
 import { Link, useNavigate } from 'react-router-dom';
 
-const Table = ({ applications, updateStatus }) => {
+const Table = ({ applications, updateStatus, setOpenApplication }) => {
 
   const navigate = useNavigate();
 
@@ -38,11 +38,11 @@ const Table = ({ applications, updateStatus }) => {
         <tbody>
           {
             applications.map((application, index) => (
-              <tr className="table-row" key={index} onClick={() => handleNavigation(application)}>
-                <td>{application.name}</td>
-                <td>{application.notes}</td>
+              <tr className="table-row" key={index}>
+                <td onClick={() => setOpenApplication(application)}>{application.name}</td>
+                <td onClick={() => setOpenApplication(application)}>{application.notes}</td>
                 <td><StatusDropdown handleChange={(e) => onStatusChange(e, application.id)} value={application.status}/></td>
-                <td>{new Date(application.applyDate).toLocaleDateString(undefined, options)}</td>
+                <td onClick={() => setOpenApplication(application)}>{new Date(application.applyDate).toLocaleDateString(undefined, options)}</td>
               </tr>
             ))
           }

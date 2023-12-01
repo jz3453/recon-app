@@ -28,7 +28,7 @@ opportunitiesData = [
     "applicationInstructions": "",
     "applicationType": "inside",
     "eligibility": {
-      "year": [
+      "years": [
         "Sophomore",
         "Junior",
         "Senior"
@@ -55,7 +55,7 @@ opportunitiesData = [
         "topNum": 5,
         "bottomNum": 1,
         "questionText": "Please check all of the following courses that you have taken:",
-        "questionType": "checklist",
+        "questionType": "Checklist",
         "required": True,
         "wordLimit": 0
       },
@@ -70,7 +70,31 @@ opportunitiesData = [
         "topNum": 5,
         "bottomNum": 1,
         "questionText": "Do you have Unity experience?",
-        "questionType": "checklist",
+        "questionType": "Checklist",
+        "required": True,
+        "wordLimit": 0
+      },
+      {
+        "questionId": 3,
+        "checkboxChoices": [],
+        "topLabel": "Excellent",
+        "bottomLabel": "Poor",
+        "topNum": 5,
+        "bottomNum": 1,
+        "questionText": "How would you rate your experience?",
+        "questionType": "Linear Scale",
+        "required": True,
+        "wordLimit": 0
+      },
+      {
+        "questionId": 4,
+        "checkboxChoices": [],
+        "topLabel": "",
+        "bottomLabel": "",
+        "topNum": 5,
+        "bottomNum": 1,
+        "questionText": "Why are you interested in this opportunity?",
+        "questionType": "Paragraph",
         "required": True,
         "wordLimit": 0
       }
@@ -118,6 +142,14 @@ applicationsData = [
         "answer": [
           "Yes"
         ]
+      },
+      {
+        "questionId": 3,
+        "answer": 5
+      },
+      {
+        "questionId": 4,
+        "answer": "The prospect of engaging in Augmented Reality (AR) and Virtual Reality (VR) research ignites my curiosity and enthusiasm for technology's potential impact. I'm eager to delve into the practical applications of AR and VR, unraveling new possibilities for human interaction and problem-solving. Joining a team dedicated to exploring these technologies aligns perfectly with my goal of contributing to cutting-edge research while learning from experienced professionals."
       }
     ],
     "documents": [
@@ -160,6 +192,14 @@ applicationsData = [
         "answer": [
           "Yes"
         ]
+      },
+      {
+        "questionId": 3,
+        "answer": 4
+      },
+      {
+        "questionId": 4,
+        "answer": "The realm of Augmented Reality (AR) and Virtual Reality (VR) holds an irresistible allure for me due to its transformative potential across industries. Exploring uncharted territories within this dynamic field and contributing to pioneering research efforts aligns perfectly with my passion for innovation and problem-solving. Your organization's commitment to pushing the boundaries of AR and VR resonates deeply with my desire to be part of a team dedicated to shaping the future through technology."
       }
     ],
     "documents": [
@@ -181,7 +221,7 @@ def post_application():
   if request.method == 'OPTIONS':
         # Handle CORS preflight request
         response = make_response()
-        response.headers.add('Access-Control-Allow-Origin', 'http://localhost:3002')
+        response.headers.add('Access-Control-Allow-Origin', 'http://localhost:3000')
         response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
         response.headers.add('Access-Control-Allow-Methods', 'POST')
         return response
@@ -199,6 +239,15 @@ def post_application():
 @app.route('/get_opportunities', methods=['GET', 'OPTIONS'])
 def get_opportunities():
     return jsonify(opportunitiesData)
+
+@app.route('/get_opportunity/<int:opportunity_id>', methods=['GET'])
+def get_opportunity(opportunity_id):
+    opportunity = next((opp for opp in opportunitiesData if opp["id"] == opportunity_id), None)
+
+    if opportunity:
+        return jsonify(opportunity), 200
+    else:
+        return jsonify({'error': 'Opportunity not found'}), 404
 
 @app.route('/get_applications/<int:opportunity_id>', methods=['GET', 'OPTIONS'])
 def get_applications(opportunity_id):
@@ -218,7 +267,7 @@ def get_application(application_id):
 def update_status(application_id):
     if request.method == 'OPTIONS':
         response = make_response()
-        response.headers.add('Access-Control-Allow-Origin', 'http://localhost:3002')
+        response.headers.add('Access-Control-Allow-Origin', 'http://localhost:3000')
         response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
         response.headers.add('Access-Control-Allow-Methods', 'PUT')
         return response
@@ -240,6 +289,25 @@ def update_status(application_id):
     else:
         return jsonify({'error': 'Application not found'}), 404
 
+
+@app.route('/update_notes/<int:application_id>', methods=['PUT', 'OPTIONS'])
+def update_notes(application_id):
+    if request.method == 'OPTIONS':
+        response = make_response()
+        response.headers.add('Access-Control-Allow-Origin', 'http://localhost:3000')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+        response.headers.add('Access-Control-Allow-Methods', 'PUT')
+        return response
+    
+    update_data = request.json
+    application = next((app for app in applicationsData if app["id"] == application_id), None)
+
+    if application:
+        application['notes'] = update_data.get('notes', application['notes'])
+        return jsonify({'message': 'Application notes updated successfully'})
+    else:
+        return jsonify({'error': 'Application not found'}), 404
+    
 # @app.after_request
 # def after_request(response):
 #   response.headers.add('Access-Control-Allow-Origin', '*')
