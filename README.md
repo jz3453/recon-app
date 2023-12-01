@@ -28,3 +28,6 @@ The server should be running on http://127.0.0.1:5000/
 The client should be running on http://localhost:3000/
 
 ## Usage
+The app supports the process for creating a custom application form. The process starts from http://localhost:3000/. As you go throught the process, your selections and inputs will be saved in an opportunity object. Once you hit 'Complete' on the last step, the object will be sent to the server and saved. Currently, the best way to view the newly created opportunity is by visiting http://127.0.0.1:5000/get_opportunities.
+
+If you visit your profile, you can see your newly created opportunity under 'Active Applications' (or visit http://localhost:3000/dashboard). To view an existing opportunity that we populated with applications, you can click the opportunity titled 'Research in AR and VR' posted on '11/26'. These applications are hardcoded in the backend as we currently haven't implemented the functionalities for submitting an application. However, you can update the statuses of the existing applications, and it will be registered in the backend and frontend. You can view an application in more detail by clicking on it.
