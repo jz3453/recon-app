@@ -17,6 +17,8 @@ Clone this repository.
   - `pip3 install flask_cors`
 6. Start the Flask server: `python3 server.py`
 
+The server should be running on http://127.0.0.1:5000/
+
 ### Frontend (React App)
 1. Make sure you have Node.js and npm installed
 2. Navigate to the `client` directory
