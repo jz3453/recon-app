@@ -1,7 +1,7 @@
 # reCon App
 
 ## Description
-An application that extends [Columbia's Undergraduate Research Opportunities website](https://undergrad.research.columbia.edu/jobs/search)
+An application that extends [Columbia's Undergraduate Research Opportunities website](https://undergrad.research.columbia.edu/jobs/search) to give it additional functionalities that support creating, hosting, and managing applications directly on the website. Currently, this app focuses on implementing the lab-side.
 
 ## Installation
 Clone this repository.
