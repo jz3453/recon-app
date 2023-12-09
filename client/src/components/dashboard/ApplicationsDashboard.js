@@ -157,6 +157,8 @@ const ApplicationsDashboard = () => {
         else if(openTab === 'extend-offer') setTabApplications(extendOffer);
         else if(openTab === 'reject') setTabApplications(reject);
 
+        filterApplications(pending);
+
         if(openApplication !== null) {
           const application = response.data.find(application => application.id === openApplication.id);
           setOpenApplication(application);
