@@ -360,7 +360,7 @@ const CreateApplication = ({ opportunityData, setOpportunityData, handleSubmit, 
                   <div className="paragraph">Prior Research Experience</div>
                 </div>
                 <div className="subsection row">
-                  <div className="paragraph">Minimum Terms</div>
+                  <div className="paragraph">Minimum Terms Available To Work</div>
                   <input 
                     className="term-input" 
                     type="text" 

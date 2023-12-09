@@ -46,3 +46,24 @@
   color: #0E14B4;
   font-size: 16px;
 }
+
+.profile {
+  position: relative; /* Make the container relative for positioning */
+}
+
+.notification-circle-profile {
+  position: absolute;
+  top: -2px; /* Adjust the top position */
+  right: -6px; /* Adjust the right position */
+  width: 18px;
+  height: 18px;
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+  display: flex;
+  justify-content: center; /* Horizontal centering */
+  align-items: center; /* Vertical centering */
+  border-radius: 50%;
+  background-color: #FF1F00;
+  color: #FFFFFF;
+}

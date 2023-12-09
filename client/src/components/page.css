@@ -17,8 +17,8 @@
 }
 
 .main-content {
-  border-left: rgb(255, 121, 121) 1px solid; /* Remove this border */
-  border-right: rgb(255, 121, 121) 1px solid; /* Remove this border */
+  /* border-left: rgb(255, 121, 121) 1px solid;
+  border-right: rgb(255, 121, 121) 1px solid; */
   width: 60%;
   margin: 0 auto;
   display: flex;
@@ -147,6 +147,7 @@
   margin: 0;
   font-size: 12px;
   color: #2C2C2C;
+  display: flex;
 }
 
 .section-box .two-button-container {
@@ -292,6 +293,15 @@
 
 .modal-container .section-box {
   width: 60%;
+  background-color: #ffffff;
+  border: rgba(0, 0, 0, 0.15) 1px solid;
+  border-radius: 5px;
+  padding: 15px;
+  box-sizing: border-box;
+}
+
+.modal-container .warning-modal-box {
+  width: 40%;
   background-color: #ffffff;
   border: rgba(0, 0, 0, 0.15) 1px solid;
   border-radius: 5px;
@@ -677,3 +687,4 @@ input:checked + .slider:before {
   color: #7a7a7a;
   margin-top: 30px;
 }
+

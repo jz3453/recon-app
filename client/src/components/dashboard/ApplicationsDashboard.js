@@ -3,6 +3,7 @@ import TopBar from '../topbar/TopBar';
 import Tabs from '../stepsoutline/Tabs';
 import Table from '../table/Table';
 import StatusDropdown from '../table/StatusDropdown';
+import AppStatusDropdown from './AppStatusDropdown';
 import '../page.css';
 import './dashboard.css';
 import { Link, useParams } from 'react-router-dom';
@@ -10,16 +11,90 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Modal from '@mui/material/Modal';
 import axios from 'axios';
 
+const convertToCSV = (applications) => {
+  // const csvRows = [];
+  const application = applications[0];
+  // const headers = Object.keys(applications[0]);
+  let headersSet = new Set();
+  Object.keys(application).forEach(key => {
+    if (key === 'answers') {
+      application.answers.forEach(answer => {
+        headersSet.add(`Answer: ${answer.questionText}`);
+      });
+    } else if (key === 'eligibility') {
+      Object.keys(application.eligibility).forEach(key => {
+        headersSet.add(`eligibility - ${key === 'experience' ? 'prior research experience' : key === 'minimumTerms' ? 'terms available' : key}`);
+      });
+    } else {
+      headersSet.add(key);
+    }
+  });
+  console.log(headersSet);
+  const headers = Array.from(headersSet);
+  const csvRows = [];
+  csvRows.push(headers.join(','));
+  for (const row of applications) {
+    const values = headers.map(header => {
+      if (header.includes('Answer')) {
+        const answers = row.answers.map(answer => {
+          console.log(answer)
+          const escaped = ('' + answer.answer).replace(/"/g, '\\"');
+          return `"${escaped}"`;
+        });
+        return answers.join(',');
+      } else if (header === 'eligibility') {
+        const eligibility = Object.keys(row.eligibility).map(key => {
+          const escaped = ('' + row.eligibility[key]).replace(/"/g, '\\"');
+          return `"${escaped}"`;
+        });
+        return eligibility.join(',');
+      } else {
+        const escaped = ('' + row[header]).replace(/"/g, '\\"');
+        return `"${escaped}"`;
+      }
+    });
+    csvRows.push(values.join(','));
+  }
+  return csvRows.join('\n');
+};
+
+const downloadCSV = (applications) => { 
+  const csvContent = convertToCSV(applications);
+  const blob = new Blob([csvContent], { type: 'text/csv' });
+  const link = document.createElement('a');
+  link.href = window.URL.createObjectURL(blob);
+  link.download = 'applications.csv';
+  link.click();
+};
+
 
 const ApplicationsDashboard = () => {
 
   const { opportunityId } = useParams();
   const [opportunity, setOpportunity] = useState({});
 
+  const [warningModalOpen, setWarningModalOpen] = useState(false);
+  const [confirmed, setConfirmed] = useState(false);
+
   const fetchOpportunity = () => {
     axios.get(`http://127.0.0.1:5000/get_opportunity/${opportunityId}`)
       .then(response => {
         setOpportunity(response.data);
+        const eligibility = response.data.eligibility;
+        let conditions = [];
+        if(eligibility?.years && eligibility?.years.length > 0) {
+          conditions.push("year");
+        }
+        if(eligibility?.majors && eligibility?.majors.length > 0) {
+          conditions.push("major");
+        }
+        if(eligibility?.experience) {
+          conditions.push("experience");
+        }
+        if(eligibility?.minimumTerms && eligibility?.minimumTerms.length > 0) {
+          conditions.push("terms");
+        }
+        setEligibilityConditions(conditions);
         console.log(response.data)
       })
       .catch(error => {
@@ -36,13 +111,28 @@ const ApplicationsDashboard = () => {
   const [extendOfferApplications, setExtendOfferApplications] = useState([]);
   const [rejectApplications, setRejectApplications] = useState([]);
   const [tabApplications, setTabApplications] = useState([]); // applications to display in table based on tab [all, pending, interviewing, shortlist, extend-offer, reject
+  const [filteredApplications, setFilteredApplications] = useState([]); // applications to display in table based on filter [all, pending, interviewing, shortlist, extend-offer, reject
   const [counts, setCounts] = useState({});
 
   const [openApplication, setOpenApplication] = useState(null);
   const [eligible, setEligible] = useState(true);
   const [eligibilityStats, setEligibilityStats] = useState(null);
+  const [eligibilityConditions, setEligibilityConditions] = useState([]);
+  const [filterConditions, setFilterConditions] = useState([]);
   const [notes, setNotes] = useState('');
   const [changeMade, setChangeMade] = useState(false);
+
+  const filterConditionChange = (e, condition) => {
+    console.log(condition, e.target.checked);
+    if(e.target.checked) {
+      setFilterConditions([...filterConditions, condition]);
+      filterApplications(tabApplications);
+    } else {
+      console.log(filterConditions.includes(condition));
+      setFilterConditions(filterConditions.filter(item => item !== condition));
+      filterApplications(tabApplications);
+    }
+  }
 
   const fetchApplications = () => {
     axios.get(`http://127.0.0.1:5000/get_applications/${opportunityId}`)
@@ -86,6 +176,32 @@ const ApplicationsDashboard = () => {
       });
   }
 
+  const filterApplications = (tabapps) => {
+
+    const filtered = tabapps.filter(application => {
+      let isEligible = true;
+      if(filterConditions.includes("year")) {
+        isEligible = isEligible && application?.eligibility?.year[0];
+      }
+      if(filterConditions.includes("major")) {
+        isEligible = isEligible && application?.eligibility?.majors[0];
+      }
+      if(filterConditions.includes("experience")) {
+        isEligible = isEligible && application?.eligibility?.experience[0];
+      }
+      if(filterConditions.includes("terms")) {
+        isEligible = isEligible && application?.eligibility?.minimumTerms[0];
+      }
+      return isEligible;
+    });
+    console.log(filtered);
+    setFilteredApplications(filtered);
+  }
+
+  useEffect(() => {
+    filterApplications(tabApplications);
+  }, [filterConditions]);
+
   const updateStatus = (applicationId, newStatus) => {
     console.log(openTab);
     axios.put(`http://127.0.0.1:5000/update_status/${applicationId}`, { status: newStatus }, {
@@ -121,6 +237,22 @@ const ApplicationsDashboard = () => {
       });
   };
 
+
+  const updateOpportunityStatus = (opportunityId, newStatus) => {
+    const newActive = newStatus === 'Active';
+    axios.put(`http://127.0.0.1:5000/update_opportunitystatus/${opportunityId}`, { active: newActive }, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(response => {
+        fetchOpportunity();
+      })
+      .catch(error => {
+        console.error('Error updating status:', error);
+      });
+  };
+
   useEffect(() => {
     fetchApplications();
     fetchOpportunity();
@@ -140,6 +272,8 @@ const ApplicationsDashboard = () => {
     } else if (openTab === 'reject') {
       setTabApplications(rejectApplications);
     }
+    setFilterConditions([]);
+    setFilteredApplications(tabApplications);
   }, [openTab]);
 
   useEffect(() => {
@@ -153,41 +287,29 @@ const ApplicationsDashboard = () => {
     let eligStats = {};
 
     if(eligibility?.years && eligibility?.years.length > 0) {
-      const years = eligibility?.years;
-      const studentYear = openApplication?.eligibility?.year;
-      console.log('YEAR: ', studentYear);
-      if(years.includes(studentYear)) {
-        isEligible = isEligible && true;
-        eligStats['year'] = true;
-      } else {
-        isEligible = isEligible && false;
-        eligStats['year'] = false;
-      }
+      const yearEligible = openApplication?.eligibility?.year[0];
+      isEligible = isEligible && yearEligible;
+      eligStats['year'] = yearEligible;
+      console.log("YEAR");
     }
 
     if(eligibility?.majors && eligibility?.majors.length > 0) {
-      const majors = eligibility?.majors;
-      const studentMajors = openApplication?.eligibility?.majors;
-      console.log('MAJORS: ', studentMajors);
-      if(studentMajors.some(major => majors.includes(major))) {
-        isEligible = isEligible && true;
-        eligStats['majors'] = true;
-      } else {
-        isEligible = isEligible && false;
-        eligStats['majors'] = false;
-      }
+      const majorEligible = openApplication?.eligibility?.majors[0];
+      isEligible = isEligible && majorEligible;
+      eligStats['majors'] = majorEligible;
+      console.log("MAJOR");
     }
     if(eligibility?.experience) {
-      const studentExperience = openApplication?.eligibility?.experience;
-      console.log('EXPERIENCE: ', studentExperience);
+      const studentExperience = openApplication?.eligibility?.experience[0];
       isEligible = isEligible && studentExperience;
       eligStats['experience'] = studentExperience;
+      console.log("EXPERIENCE");
     }
-    if(eligibility?.minTerms && eligibility?.minTerms.length > 0) {
-      const studentTerms = openApplication?.eligibility?.minTerms;
-      console.log('TERMS: ', studentTerms);
-      isEligible = isEligible && studentTerms;
-      eligStats['terms'] = studentTerms;
+    if(eligibility?.minimumTerms && eligibility?.minimumTerms.length > 0) {
+      const termsEligible = openApplication?.eligibility?.minimumTerms[0];
+      isEligible = isEligible && termsEligible;
+      eligStats['terms'] = termsEligible;
+      console.log("TERMS");
     }
     setEligible(isEligible);
     setEligibilityStats(eligStats);
@@ -200,6 +322,10 @@ const ApplicationsDashboard = () => {
     setChangeMade(false);
   }, [openApplication]);
 
+  useEffect(() => {
+    setConfirmed(false);
+  }, [opportunity]);
+
 
   return (
     <div className="page-container">
@@ -210,10 +336,95 @@ const ApplicationsDashboard = () => {
             <FontAwesomeIcon icon="fa-solid fa-arrow-left" />
             Back to Opportunities
           </Link>
+          <div className="research-title-header">
+            <div className="research-title">
+              {opportunity.opportunityTitle}
+            </div>
+            <div className="opportunity-status">
+              <div className="small-header">STATUS: </div>
+              <AppStatusDropdown handleChange={(e) => {
+                if(opportunity.active) {
+                  setWarningModalOpen(true);
+                } else {
+                  updateOpportunityStatus(opportunity.id, e.target.value);
+                }
+              }} value={opportunity.active} />
+            </div>
+            <Modal
+              open={warningModalOpen}
+              onClose={() => setWarningModalOpen(false)}
+            >
+              <div className="modal-container">
+                <div className="warning-modal-box">
+                  <div className="paragraph bolded">Archive Opportunity</div>
+                  <div className="text">
+                    Are you sure you want to archive and close applications for{' '}
+                    <span className="bold-text">
+                      {opportunity.opportunityTitle}
+                    </span>
+                    ?
+                  </div>
+                  <div className="warning-box">
+                    <div className="warning-header">
+                      <FontAwesomeIcon icon="fa-solid fa-triangle-exclamation" className="warning-icon" />
+                      <div className="warning-header-text">Warning</div>
+                    </div>
+                    <div className="text warning">Archiving this post will trigger notifications to all current applicants, informing them that this opportunity is no longer available. </div>
+                  </div>
+                  <div className="two-button-container smaller-version">
+                    <button 
+                      className="button smaller"
+                      onClick={() => setWarningModalOpen(false)}
+                    >
+                      No, Cancel
+                    </button>
+                    <button 
+                      className={`button smaller next-button active`}
+                      onClick={() => {
+                        setConfirmed(true);
+                        setWarningModalOpen(false);
+                        updateOpportunityStatus(opportunity.id, false);
+                      }}
+                    >
+                      Yes, Archive
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </Modal>
+          </div>
           <Tabs openTab={openTab} setOpenTab={setOpenTab} counts={counts} />
           <div className="section">
-            <div className="section-header">Applications</div>
-            <Table applications={tabApplications} updateStatus={updateStatus} setOpenApplication={setOpenApplication} />
+            <div className="applications-header">
+              <div className="section-header">Applications</div>
+              <div className="export-button-container">
+                <button disabled={openTab === 'pending' ? filteredApplications.length === 0 : tabApplications.length === 0} className="export-button" onClick={() => {openTab === 'pending' ? downloadCSV(filteredApplications) : downloadCSV(tabApplications)}}>Export CSV</button>
+                <button disabled={openTab === 'pending' ? filteredApplications.length === 0 : tabApplications.length === 0} className="export-button">Export Documents</button>
+              </div>
+            </div>
+            {
+              openTab === 'pending' && (
+                <div className="eligibility-container-box">
+                  <div className="container-prompt">Exclude students who do not meet eligibility for: </div>
+                  {
+                    eligibilityConditions?.map((condition, index) => (
+                      <div key={index} className="condition">
+                        <input 
+                          className="checkbox" 
+                          type="checkbox" 
+                          onChange={(e) => filterConditionChange(e, condition)}
+                        />
+                        <div className="condition-text">
+                          {condition === "year" ? "School Year" : condition === "major" ? "Major" : condition === "experience" ? "Prior Research Experience" : "Minimum Terms Available to Work"}
+                        </div>
+                      </div>
+                    ))
+                  }
+                </div>
+              )
+            }
+            {openTab === 'pending' && <Table applications={filteredApplications} updateStatus={updateStatus} setOpenApplication={setOpenApplication} />}
+            {openTab !== 'pending' && <Table applications={tabApplications} updateStatus={updateStatus} setOpenApplication={setOpenApplication} />}
             <Modal
               open={openApplication !== null}
               onClose={() => setOpenApplication(null)}
@@ -237,8 +448,8 @@ const ApplicationsDashboard = () => {
                         {
                           Object.keys(eligibilityStats).map((key, index) => (
                             <div key={index} className={eligibilityStats[key] ? "eligibility-stat met" : "eligibility-stat unmet"}>
-                              {eligibilityStats[key] ? <FontAwesomeIcon icon="fa-solid fa-check" /> : <FontAwesomeIcon icon="fa-solid fa-times" />} 
-                              {key === "experience" ? "prior experience" : key === "terms" ? "min. terms" : key}
+                              {eligibilityStats[key] ? <FontAwesomeIcon icon="fa-solid fa-check" className="eligibility-icon" /> : <FontAwesomeIcon icon="fa-solid fa-times" className="eligibility-icon" />} 
+                              {key === "experience" ? "prior experience" : key === "terms" ? `min. terms - ${openApplication?.eligibility?.minimumTerms[1]}` : key}
                             </div>
                           ))
                         }
