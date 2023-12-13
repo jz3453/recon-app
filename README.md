@@ -40,3 +40,5 @@ This project utilizes the following libraries and frameworks:
 
 - [Material-UI](https://mui.com/) - A popular React UI framework for building modern web applications.
 - [Font Awesome](https://fontawesome.com/) - A library providing a wide range of free icons for web projects.
+
+  Thank you to Professor Smith for organizing this class, to Gaurav for giving us the guidance we needed throughout this semester, and to other TAs for being so supportive!
